@@ -24,7 +24,7 @@ jobs:
         run: npm install gray-matter glob
 
       - name: Generate index.json
-        run: node .github/scripts/generate-index.js
+        run: node .github/scripts/datagen.js
 
       - name: Commit index file
         run: |

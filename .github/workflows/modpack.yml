@@ -1,3 +1,4 @@
+# .github/workflows/modpack.yml
 name: Extract files from .mrpack
 permissions:
   contents: write
@@ -5,7 +6,7 @@ permissions:
 on:
   push:
     paths:
-      - "**/*.mrpack"
+      - "modpacks/**/*.mrpack"
   workflow_dispatch:
 
 jobs:
@@ -17,48 +18,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Find changed .mrpack files
-        id: mrpack
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            # For manual trigger, find all .mrpack files
-            find . -name "*.mrpack" -type f > changed_mrpack.txt
-          else
-            # For push trigger, find only changed files
-            git diff --name-only --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep '.mrpack$' > changed_mrpack.txt || true
-          fi
-          cat changed_mrpack.txt
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-      - name: Extract, rename, and inject SHA-1
-        run: |
-          while read file; do
-            # Skip if file doesn't exist (in case of deletion)
-            if [ ! -f "$file" ]; then
-              echo "Skipping deleted file: $file"
-              continue
-            fi
-            
-            dir=$(dirname "$file")
-            name=$(basename "$file" .mrpack)
-            sha1=$(sha1sum "$file" | awk '{print $1}')
-            
-            # Extract to the same directory as the .mrpack file
-            unzip -j "$file" "modrinth.index.json" -d "$dir"
-            chmod 644 "$dir/modrinth.index.json"
-            jq --arg sha1 "$sha1" --arg id "$name" '. + {sha1: $sha1, id: $id}' "$dir/modrinth.index.json" > "$dir/tmp.json" && mv "$dir/tmp.json" "$dir/modrinth.index.json"
-
-            unzip -j "$file" "overrides/icon.png" -d "$dir"
-
-            # Rename .mrpack to instance.mrpack
-            mv -f "$file" "$dir/instance.mrpack"
-          done < changed_mrpack.txt
+      - name: Process .mrpack files
+        run: node .github/scripts/modpack.js
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
 
       - name: Commit extracted files
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Extracted and updated files from .mrpack" || echo "No changes to commit"
+          git commit -m "🔧 Processed .mrpack files" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
