@@ -80,29 +80,37 @@ function processMrpackFile(filePath) {
   try {
     const sha1 = calculateSHA1(filePath);
 
+    // Extract modrinth.index.json
     execSync(`unzip -o -j "${filePath}" "modrinth.index.json" -d "${dir}"`, {
       stdio: "pipe",
     });
 
     const modrinthPath = path.join(dir, "modrinth.index.json");
     if (fs.existsSync(modrinthPath)) {
+      fs.chmodSync(modrinthPath, 0o644);
+
       const modrinthData = JSON.parse(fs.readFileSync(modrinthPath, "utf-8"));
       modrinthData.sha1 = sha1;
       modrinthData.id = instanceName;
 
       fs.writeFileSync(modrinthPath, JSON.stringify(modrinthData, null, 2));
-      fs.chmodSync(modrinthPath, 0o644);
     }
 
-    execSync(`unzip -o -j "${filePath}" "overrides/icon.png" -d "${dir}"`, {
-      stdio: "pipe",
-    });
+    // Extract icon.png (ignore errors if not found)
+    try {
+      execSync(`unzip -o -j "${filePath}" "overrides/icon.png" -d "${dir}"`, {
+        stdio: "pipe",
+      });
 
-    const iconPath = path.join(dir, "icon.png");
-    if (fs.existsSync(iconPath)) {
-      fs.chmodSync(iconPath, 0o644);
+      const iconPath = path.join(dir, "icon.png");
+      if (fs.existsSync(iconPath)) {
+        fs.chmodSync(iconPath, 0o644);
+      }
+    } catch {
+      // Icon is optional
     }
 
+    // Rename to instance.mrpack
     if (filePath !== targetPath) {
       fs.renameSync(filePath, targetPath);
     }
@@ -113,6 +121,7 @@ function processMrpackFile(filePath) {
     throw error;
   }
 }
+
 function main() {
   const isManualTrigger =
     process.env.GITHUB_EVENT_NAME === "workflow_dispatch" ||
