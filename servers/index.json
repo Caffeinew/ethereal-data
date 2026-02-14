@@ -1,0 +1,22 @@
+{
+  "test": {
+    "ru": {
+      "title": "Test Server 1.21.1",
+      "description": "Бла Бла Бла Бла"
+    },
+    "en": {
+      "title": "Test Server 1.21.1",
+      "description": "Bla bla bla bla"
+    }
+  },
+  "biba": {
+    "ru": {
+      "title": "Biba 1.21.1",
+      "description": "биба боба биба"
+    },
+    "en": {
+      "title": "Biba 1.21.1",
+      "description": "biba boba biba boba"
+    }
+  }
+}
