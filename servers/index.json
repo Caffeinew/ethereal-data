@@ -2,21 +2,37 @@
   "test": {
     "ru": {
       "title": "Test Server 1.21.1",
-      "description": "Бла Бла Бла Бла"
+      "description": "Бла Бла Бла Бла",
+      "overworld": 15000,
+      "nether": 10000,
+      "end": 15000,
+      "created": 1771963126141
     },
     "en": {
       "title": "Test Server 1.21.1",
-      "description": "Bla bla bla bla"
+      "description": "Bla bla bla bla",
+      "overworld": 15000,
+      "nether": 10000,
+      "end": 15000,
+      "created": 1771963126141
     }
   },
   "biba": {
     "ru": {
       "title": "Biba 1.21.1",
-      "description": "биба боба биба"
+      "description": "биба боба биба",
+      "overworld": 15000,
+      "nether": 10000,
+      "end": 15000,
+      "created": 1771963126141
     },
     "en": {
       "title": "Biba 1.21.1",
-      "description": "biba boba biba boba"
+      "description": "biba boba biba boba",
+      "overworld": 15000,
+      "nether": 10000,
+      "end": 15000,
+      "created": 1771963126141
     }
   }
 }
