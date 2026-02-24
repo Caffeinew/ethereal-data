@@ -1,5 +1,6 @@
 ---
-title: Biba 1.21.1
+title: Biba
+version: 1.21.1
 description: biba boba biba boba
 overworld: 15000
 nether: 10000
